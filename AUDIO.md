@@ -32,6 +32,14 @@ No code changes are needed. The game finds the file by its name. You can record 
 | `milly.mp3` | "That's Milly!" | Milly is tapped |
 | `croissant.mp3` | "Yummy! Croissants are great!" | Ghost Pop: the croissant is tapped |
 | `dressup-intro.mp3` | "Tap a costume for Sniper!" | Dress Up Sniper starts (right after the game's name) |
+| `outfit-ghost.mp3` | "Boo!" | Dress Up: the ghost sheet goes on |
+| `outfit-shark.mp3` | "Chomp chomp!" | Dress Up: the shark outfit goes on |
+| `outfit-firefighter.mp3` | "Woo-woo!" (like a siren) | Dress Up: the firefighter outfit goes on |
+| `outfit-skeleton.mp3` | "Rattle rattle!" | Dress Up: the skeleton outfit goes on |
+| `outfit-bee.mp3` | "Buzz buzz!" | Dress Up: the bee outfit goes on |
+| `outfit-bird.mp3` | "Tweet tweet!" | Dress Up: the bird outfit goes on |
+| `outfit-monkey.mp3` | "Ooh ooh ah ah!" | Dress Up: the monkey outfit goes on |
+| `outfit-dinosaur.mp3` | "Roar!" | Dress Up: the dinosaur outfit goes on |
 | `tada.mp3` | "Wow, Sniper looks great!" | The star (Ta-da) button; the party starts just after it finishes |
 | `cheer-nicely-done.mp3` | "Nicely done. You're good at this." | Celebration (one of three, picked at random) |
 | `cheer-great.mp3` | "Great job!" | Celebration |

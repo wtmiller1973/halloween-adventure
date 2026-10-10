@@ -214,7 +214,12 @@ svg.art { display: block; width: 100%; height: 100%; overflow: visible; pointer-
 
 /* ------------------------------------------------ dress up */
 .dog-area { position: absolute; left: 0; right: 0; top: calc(var(--safe-t) + 70px); bottom: calc(43 * var(--vh) + var(--safe-b)); display: grid; place-items: center; }
-.dog { position: relative; height: 100%; aspect-ratio: 400 / 580; max-width: 92vw; }
+.dog { position: relative; height: 100%; aspect-ratio: 400 / 580; max-width: calc(100vw - 200px); } /* room for the outfits button */
+.more-outfits {
+  position: absolute; right: calc(var(--safe-r) + 8px); top: 50%; margin-top: -44px; z-index: 5;
+  width: 88px; height: 88px; padding: 10px; background: rgba(123, 63, 184, 0.9);
+}
+.more-outfits svg { position: absolute; left: 14px; top: 14px; width: calc(100% - 28px); height: calc(100% - 28px); }
 .dog .layer { position: absolute; inset: 0; }
 .dog.hop { animation: hop 0.5s ease-out; }
 .sniper-tail { animation: wag 1.2s ease-in-out infinite; }

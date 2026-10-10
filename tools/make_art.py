@@ -318,20 +318,19 @@ write('costumes', 'bow-tie', DOG_VB,
       '<circle cx="222" cy="238" r="4"/></g>'
       f'<rect x="186" y="222" width="28" height="28" rx="8" fill="{ORANGE}"/>')
 
-hem = 'C100,440 100,410 100,370'
-waves = ''.join(f' Q{x + 16},{456 if i % 2 else 458} {x + 32},{470 - (i % 2) * 4}'
-                for i, x in enumerate(range(92, 300, 32)))
-write('costumes', 'ghost-sheet', DOG_VB,
-      f'<path fill="#F7F6FF" d="M150,198 Q200,228 250,198 C278,236 298,300 302,370 C304,420 306,446 312,466 '
-      f'L92,466 C100,440 100,410 100,370 C104,300 124,236 150,198 Z"/>'
-      f'<path fill="#F7F6FF" d="M92,462 {waves[1:]} L312,462 Z" stroke="none"/>'
-      f'<path fill="none" d="M92,466 {waves[1:]}"/>'
-      '<path d="M268,250 C286,300 292,360 290,440" fill="none" stroke="#DCD8F0" stroke-width="10"/>'
-      '<ellipse cx="174" cy="326" rx="14" ry="20" fill="#2b1b17"/>'
-      '<ellipse cx="226" cy="326" rx="14" ry="20" fill="#2b1b17"/>'
-      '<ellipse cx="200" cy="378" rx="15" ry="19" fill="#2b1b17"/>'
-      '<g fill="#F7B6C8" stroke="none" opacity=".8"><ellipse cx="152" cy="356" rx="12" ry="7"/>'
-      '<ellipse cx="248" cy="356" rx="12" ry="7"/></g>')
+# Zombie: a friendly tattered shirt with patches, stitches and a bandage.
+write('costumes', 'zombie-shirt', DOG_VB,
+      '<path fill="#86A96F" d="M150,212 Q200,240 250,212 C276,256 296,320 302,390 L286,410 L272,394 L256,416 '
+      'L240,396 L222,418 L204,398 L186,420 L170,398 L152,416 L136,394 L118,410 L98,390 C104,320 124,256 150,212 Z"/>'
+      '<path d="M262,250 C278,300 286,340 288,380" fill="none" stroke="#6E8F5A" stroke-width="9"/>'
+      '<rect x="136" y="284" width="40" height="34" rx="4" fill="#C08A55"/>'
+      '<path d="M140,290 l8,0 M152,290 l8,0 M164,290 l8,0 M140,312 l8,0 M152,312 l8,0 M164,312 l8,0" stroke-width="3"/>'
+      '<rect x="226" y="338" width="36" height="32" rx="4" fill="#9A7BC4" transform="rotate(8 244 354)"/>'
+      '<path d="M156,356 L248,300" fill="none" stroke="#2b1b17" stroke-width="20"/>'
+      '<path d="M156,356 L248,300" fill="none" stroke="#F3E9D2" stroke-width="13"/>'
+      '<path d="M190,328 l6,-10 M206,318 l6,-10 M222,309 l6,-10" stroke="#C9B48E" stroke-width="3"/>'
+      '<path d="M206,380 l12,12 M218,380 l-12,12 M226,384 l12,12 M238,384 l-12,12" stroke-width="4"/>'
+      '<path d="M176,250 L186,262 L172,268 Z M120,350 L132,362 L118,368 Z" fill="#2b1b17" stroke-width="3"/>')
 
 write('costumes', 'pumpkin-suit', DOG_VB,
       '<path d="M200,258 C196,240 200,226 212,218" fill="none" stroke="#3E8E41" stroke-width="16"/>'
@@ -355,6 +354,161 @@ write('costumes', 'vampire-cape', DOG_VB,
       '<path fill="#C8263A" d="M236,196 C270,170 296,136 312,100 C280,124 252,134 218,150 Z"/>'
       '<path fill="#231A2E" d="M150,196 C108,240 76,360 56,472 L344,472 C324,360 292,240 250,196 Z"/>'
       '<path fill="#C8263A" stroke="none" d="M158,214 C126,256 102,360 88,466 L312,466 C298,360 274,256 242,214 Z"/>')
+
+# ---------------------------------------------------------------- Costume set 2
+# Whole outfits; each piece is its own file. Hoods sit over the top of his
+# head (above his eyes), suits cover his body like a onesie.
+SUIT_D = ('M150,212 Q200,240 250,212 C276,256 300,330 310,400 C316,440 290,458 254,458 L146,458 '
+          'C110,458 84,440 90,400 C100,330 124,256 150,212 Z')
+HOOD_D = 'M128,104 C122,30 160,-4 200,-4 C240,-4 278,30 272,104 Q200,72 128,104 Z'
+
+
+def suit(colour, clip_id=None, extra=''):
+    clip = ''
+    body = f'<path fill="{colour}" d="{SUIT_D}"/>'
+    if clip_id:
+        clip = f'<defs><clipPath id="{clip_id}"><path d="{SUIT_D}"/></clipPath></defs>'
+        body += f'<g clip-path="url(#{clip_id})" stroke="none">{extra}</g><path fill="none" d="{SUIT_D}"/>'
+        extra = ''
+    legs = '<path d="M200,392 L200,458" fill="none" stroke-width="4"/>'
+    return clip + body + legs + extra
+
+
+def edge_points(n, t0=0.12, t1=0.88):
+    """Points along the lower edge of the hood (a quadratic curve)."""
+    pts = []
+    for i in range(n):
+        t = t0 + (t1 - t0) * i / (n - 1)
+        x = (1 - t) ** 2 * 128 + 2 * t * (1 - t) * 200 + t * t * 272
+        y = (1 - t) ** 2 * 104 + 2 * t * (1 - t) * 72 + t * t * 104
+        pts.append((x, y))
+    return pts
+
+
+def teeth(n, size):
+    return ''.join(f'<path d="M{x - size * 0.6:.1f},{y - 1:.1f} L{x:.1f},{y + size:.1f} L{x + size * 0.6:.1f},{y - 1:.1f} Z" '
+                   f'fill="#fff" stroke-width="3"/>' for x, y in edge_points(n))
+
+
+def hood_eyes(y=34, dx=36):
+    return ''.join(f'<circle cx="{200 + s * dx}" cy="{y}" r="9" fill="#fff" stroke-width="3"/>'
+                   f'<circle cx="{200 + s * dx}" cy="{y + 1}" r="4.5" fill="#1a1420" stroke="none"/>' for s in (-1, 1))
+
+
+# Ghost sheet over his head and body; his own eyes look out through the holes.
+hem_waves = ''.join(f' Q{x + 17},{482 if i % 2 else 456} {x + 33.5},{470}' for i, x in enumerate(
+    [66 + 33.5 * k for k in range(8)]))
+holes = ''.join(f' M{cx - 22},112 a22,20 0 1,0 44,0 a22,20 0 1,0 -44,0 Z' for cx in (172, 228))
+write('costumes', 'ghost-sheet', DOG_VB,
+      f'<path fill="#F7F6FF" fill-rule="evenodd" d="M200,14 C138,14 100,62 98,132 C96,210 86,290 80,370 '
+      f'C76,420 72,446 66,470{hem_waves} C328,446 324,420 320,370 C314,290 304,210 302,132 C300,62 262,14 200,14 Z{holes}"/>'
+      '<path d="M270,70 C290,140 296,260 304,400" fill="none" stroke="#DCD8F0" stroke-width="10"/>'
+      '<ellipse cx="200" cy="196" rx="13" ry="16" fill="#2b1b17"/>'
+      '<g fill="#F7B6C8" stroke="none" opacity=".8"><ellipse cx="146" cy="160" rx="13" ry="8"/>'
+      '<ellipse cx="254" cy="160" rx="13" ry="8"/></g>')
+
+SHARK = '#8FA3B5'
+write('costumes', 'shark-hood', DOG_VB,
+      f'<path fill="{SHARK}" d="M186,-2 L212,-68 C222,-50 228,-26 232,-2 Z"/>'
+      f'<path fill="{SHARK}" d="{HOOD_D}"/>' + teeth(9, 13) + hood_eyes(26, 46) +
+      '<path d="M150,60 Q156,70 150,80 M250,60 Q244,70 250,80" fill="none" stroke-width="3"/>')
+write('costumes', 'shark-suit', DOG_VB,
+      f'<path fill="{SHARK}" d="M292,430 C318,424 340,400 354,372 C352,404 354,432 370,458 C342,452 318,450 292,448 Z"/>'
+      f'<path fill="{SHARK}" d="M112,320 L64,376 L118,366 Z"/><path fill="{SHARK}" d="M288,320 L336,376 L282,366 Z"/>'
+      + suit(SHARK) +
+      '<ellipse cx="200" cy="362" rx="54" ry="80" fill="#EEF3F7" stroke-width="4"/>'
+      '<path d="M132,276 Q140,288 132,300 M124,290 Q132,302 124,314 M268,276 Q260,288 268,300 M276,290 Q268,302 276,314" '
+      'fill="none" stroke-width="3"/>')
+
+FIRE = '#D7263D'
+write('costumes', 'fire-helmet', DOG_VB,
+      '<ellipse cx="200" cy="56" rx="110" ry="22" fill="#B81D2E"/>'
+      f'<path fill="{FIRE}" d="M138,56 C136,-8 264,-8 262,56 Z"/>'
+      '<path d="M200,-2 L200,52" fill="none" stroke="#9E1626" stroke-width="10"/>'
+      '<path d="M180,4 L220,4 L220,32 Q200,50 180,32 Z" fill="#FFD23F"/>'
+      '<circle cx="200" cy="22" r="7" fill="#D7263D" stroke-width="3"/>')
+stripes = ''.join(f'<rect x="80" y="{y}" width="240" height="18" fill="#FFD23F"/>'
+                  f'<rect x="80" y="{y + 6}" width="240" height="6" fill="#D9DDE3"/>' for y in (320, 392))
+write('costumes', 'fire-jacket', DOG_VB,
+      suit('#C62B2B', 'fire-clip', stripes) +
+      '<path d="M150,214 L178,262 L200,236 Z M250,214 L222,262 L200,236 Z" fill="#9E1626"/>'
+      '<path d="M200,240 L200,392" fill="none" stroke-width="4"/>'
+      '<g fill="#2b1b17" stroke="none"><rect x="192" y="276" width="16" height="7" rx="2"/>'
+      '<rect x="192" y="352" width="16" height="7" rx="2"/></g>')
+
+BONE = '#F4F1EA'
+ribs = ''.join(f'<path d="M200,{y} Q{200 - w},{y} {200 - w - 10},{y + 18}" fill="none" stroke="{BONE}" stroke-width="10"/>'
+               f'<path d="M200,{y} Q{200 + w},{y} {200 + w + 10},{y + 18}" fill="none" stroke="{BONE}" stroke-width="10"/>'
+               for y, w in ((262, 38), (290, 46), (318, 42)))
+leg_bones = ''.join(f'<path d="M{x},376 L{x},436" fill="none" stroke="{BONE}" stroke-width="10"/>'
+                    f'<circle cx="{x - 5}" cy="372" r="7" fill="{BONE}"/><circle cx="{x + 5}" cy="372" r="7" fill="{BONE}"/>'
+                    f'<circle cx="{x - 5}" cy="440" r="7" fill="{BONE}"/><circle cx="{x + 5}" cy="440" r="7" fill="{BONE}"/>'
+                    for x in (172, 228))
+write('costumes', 'skeleton-suit', DOG_VB,
+      suit('#2A2333', 'bone-clip',
+           f'<path d="M200,246 L200,344" fill="none" stroke="{BONE}" stroke-width="12" stroke-dasharray="12 5"/>' + ribs +
+           f'<path d="M168,346 Q200,330 232,346 Q236,370 200,372 Q164,370 168,346 Z" fill="{BONE}"/>' + leg_bones +
+           f'<path d="M150,244 Q176,256 200,248 Q224,256 250,244" fill="none" stroke="{BONE}" stroke-width="9"/>'))
+
+BEE = '#FFD23F'
+write('costumes', 'bee-antennae', DOG_VB,
+      band.format(c='#2A2333') +
+      '<path d="M172,28 Q156,-20 140,-46 M228,28 Q244,-20 260,-46" fill="none" stroke-width="7"/>'
+      f'<circle cx="138" cy="-52" r="15" fill="{BEE}"/><circle cx="262" cy="-52" r="15" fill="{BEE}"/>')
+bee_bands = ''.join(f'<rect x="80" y="{y}" width="240" height="30" fill="#2A2333"/>' for y in (262, 326, 390))
+write('costumes', 'bee-suit', DOG_VB, suit(BEE, 'bee-clip', bee_bands))
+bee_wing = ('<ellipse cx="104" cy="236" rx="72" ry="40" transform="rotate(-30 104 236)" fill="#DFF3FF" fill-opacity=".85"/>'
+            '<ellipse cx="118" cy="304" rx="48" ry="26" transform="rotate(18 118 304)" fill="#DFF3FF" fill-opacity=".85"/>'
+            '<path d="M156,262 Q110,236 66,214 M156,280 Q128,300 90,300" fill="none" stroke="#9FCBE8" stroke-width="3"/>')
+write('costumes', 'bee-wings', DOG_VB, f'<g class="flap-l" style="transform-origin:160px 262px">{bee_wing}</g>' +
+      mirror(f'<g class="flap-l" style="transform-origin:160px 262px">{bee_wing}</g>', 400))
+
+BIRD = '#3D8BD9'
+write('costumes', 'bird-cap', DOG_VB,
+      '<path fill="#FF8A1F" d="M200,16 C186,-16 180,-46 190,-70 C204,-50 208,-20 200,16 Z"/>'
+      '<path fill="#FFD23F" d="M200,18 C206,-14 222,-40 246,-52 C240,-28 224,-4 200,18 Z"/>'
+      '<path fill="#E8443A" d="M200,18 C192,-12 172,-34 150,-42 C158,-18 176,4 200,18 Z"/>'
+      f'<path fill="{BIRD}" d="M136,74 C134,10 266,10 264,74 Q200,56 136,74 Z"/>'
+      '<path fill="#FF9F2E" d="M182,62 L218,62 L200,94 Z"/>'
+      '<path d="M186,72 L214,72" fill="none" stroke-width="3"/>')
+bird_wing = (f'<path fill="{BIRD}" d="M160,248 C130,200 72,188 30,212 C18,232 28,252 50,256 '
+             'C32,272 40,296 66,296 C56,316 72,334 98,326 C106,340 134,336 156,304 Z"/>'
+             '<path d="M50,256 C80,256 110,256 152,262 M66,296 C96,290 124,284 154,280 M98,326 C116,314 136,302 156,296" '
+             'fill="none" stroke="#2b1b17" stroke-width="3"/>'
+             '<path d="M40,226 C70,220 110,226 146,244" fill="none" stroke="#7FB8EE" stroke-width="6"/>')
+write('costumes', 'bird-wings', DOG_VB, f'<g class="flap-l" style="transform-origin:160px 262px">{bird_wing}</g>' +
+      mirror(f'<g class="flap-l" style="transform-origin:160px 262px">{bird_wing}</g>', 400))
+
+MONKEY = '#8B5A2B'
+MONKEY_T = '#E8B98A'
+write('costumes', 'monkey-hood', DOG_VB,
+      ''.join(f'<circle cx="{x}" cy="70" r="30" fill="{MONKEY}"/><circle cx="{x}" cy="70" r="17" fill="{MONKEY_T}" stroke="none"/>'
+              for x in (122, 278)) +
+      f'<path fill="{MONKEY}" d="{HOOD_D}"/>'
+      f'<path fill="{MONKEY_T}" stroke="none" d="M170,86 C160,60 186,48 200,62 C214,48 240,60 230,86 Q200,78 170,86 Z"/>')
+write('costumes', 'monkey-suit', DOG_VB,
+      limb('M296,420 C340,420 362,382 344,352 C330,330 302,338 306,360 C309,374 324,372 324,362', MONKEY, 16) +
+      suit(MONKEY) + f'<ellipse cx="200" cy="364" rx="54" ry="74" fill="{MONKEY_T}" stroke-width="4"/>')
+
+DINO = '#5CB85C'
+DINO_L = '#B4E3A8'
+spikes = ''.join(f'<path d="M{200 + 76 * math.cos(math.radians(a)) - 12 * math.sin(math.radians(a)):.1f},'
+                 f'{48 + 52 * math.sin(math.radians(a)) + 12 * math.cos(math.radians(a)):.1f} '
+                 f'L{200 + 104 * math.cos(math.radians(a)):.1f},{48 + 80 * math.sin(math.radians(a)):.1f} '
+                 f'L{200 + 76 * math.cos(math.radians(a)) + 12 * math.sin(math.radians(a)):.1f},'
+                 f'{48 + 52 * math.sin(math.radians(a)) - 12 * math.cos(math.radians(a)):.1f} Z" fill="#FF8A1F"/>'
+                 for a in (-150, -120, -90, -60, -30))
+write('costumes', 'dino-hood', DOG_VB, spikes + f'<path fill="{DINO}" d="{HOOD_D}"/>' + teeth(7, 9) + hood_eyes(30, 40))
+belly = ''.join(f'<path d="M{200 - w},{y} Q200,{y + 8} {200 + w},{y}" fill="none" stroke="#7FC27A" stroke-width="3"/>'
+                for y, w in ((316, 44), (346, 50), (376, 48), (406, 40)))
+tail_spikes = ''.join(f'<path d="M{x},{y} L{x + 10},{y - 22} L{x + 20},{y - 2} Z" fill="#FF8A1F"/>'
+                      for x, y in ((310, 428), (334, 414), (354, 396)))
+side_spikes = ''.join(f'<path d="M{x},{y} L{x - 20},{y + 8} L{x + 2},{y + 22} Z" fill="#FF8A1F"/>'
+                      for x, y in ((122, 260), (106, 300), (96, 342)))
+write('costumes', 'dino-suit', DOG_VB,
+      tail_spikes + f'<path fill="{DINO}" d="M290,424 C330,432 362,410 384,374 C390,412 364,452 300,458 Z"/>' +
+      side_spikes + mirror(side_spikes, 400) + suit(DINO) +
+      f'<ellipse cx="200" cy="362" rx="56" ry="82" fill="{DINO_L}" stroke-width="4"/>' + belly)
 
 # ---------------------------------------------------------------- Cats
 ORANGE_CAT = '#F2A34E'

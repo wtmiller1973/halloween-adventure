@@ -65,7 +65,8 @@ describe('art', () => {
     const names = [...allJs.matchAll(/'((?:characters|icons|scenes|costumes)\/[a-z0-9-]+)'/g)].map((m) => m[1]);
     const covers = [...allJs.matchAll(/COVERS = \[([^\]]+)\]/g)]
       .flatMap((m) => [...m[1].matchAll(/'([^']+)'/g)].map((c) => 'scenes/' + c[1]));
-    const costumes = [...read('js/games/dressup.js').matchAll(/id: '([^']+)', slot/g)].map((m) => 'costumes/' + m[1]);
+    const costumes = [...read('js/games/dressup.js').matchAll(/\['([a-z-]+)', '(?:head|neck|body|back)'/g)].map((m) => 'costumes/' + m[1]);
+    expect(costumes.length).toBeGreaterThan(20);
     for (const n of [...names, ...covers, ...costumes]) {
       expect(fs.existsSync(path.join(ROOT, 'assets', n + '.svg')), n).toBe(true);
     }
