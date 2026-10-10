@@ -1,8 +1,14 @@
 // Offline support. Everything below is cached on the first visit, so the
-// game keeps working with no connection. Files are served from the cache
-// straight away and quietly refreshed in the background, so new art or
-// voice recordings show up on the next launch without bumping a version.
-const CACHE = 'goldie-halloween-v1';
+// game keeps working with no connection.
+//
+// The game's code (the page, scripts, styles) is always fetched fresh when
+// the phone is online, so a new version shows up the next time the game is
+// opened; the saved copy is only used offline (or if the network is very
+// slow). Art and sounds load from the saved copy straight away and are
+// refreshed in the background, so new art or voice recordings show up on
+// the launch after next. No version bumps are needed for either.
+const CACHE = 'goldie-halloween-v2';
+const NETWORK_WAIT_MS = 3000; // after this, a slow network falls back to the saved copy
 
 const PRECACHE = [
   './',
@@ -77,8 +83,20 @@ const PRECACHE = [
   // load, so they don't need listing here.
 ];
 
+// Always ask the server (skipping the browser's own short-term cache, which
+// on GitHub Pages can hold a file for 10 minutes); GitHub answers "not
+// modified" cheaply when nothing changed.
+const fetchFresh = (url) => fetch(url, { cache: 'no-cache' });
+
+const isCode = (req, url) =>
+  req.mode === 'navigate' || /\.(html|js|css|webmanifest)$/.test(url.pathname) || url.pathname.endsWith('/');
+
 self.addEventListener('install', (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(PRECACHE)).then(() => self.skipWaiting()));
+  e.waitUntil(
+    caches.open(CACHE)
+      .then((c) => c.addAll(PRECACHE.map((p) => new Request(p, { cache: 'reload' }))))
+      .then(() => self.skipWaiting()),
+  );
 });
 
 self.addEventListener('activate', (e) => {
@@ -91,15 +109,27 @@ self.addEventListener('activate', (e) => {
 
 self.addEventListener('fetch', (e) => {
   const req = e.request;
-  if (req.method !== 'GET' || new URL(req.url).origin !== location.origin) return;
+  const url = new URL(req.url);
+  if (req.method !== 'GET' || url.origin !== location.origin) return;
+  const key = req.mode === 'navigate' ? './' : url.pathname;
+
   e.respondWith((async () => {
     const cache = await caches.open(CACHE);
-    const key = req.mode === 'navigate' ? './' : req;
     const cached = await cache.match(key, { ignoreSearch: true });
-    const fresh = fetch(req).then((res) => {
+    const fresh = fetchFresh(url.href).then((res) => {
       if (res.ok) cache.put(key, res.clone());
       return res;
     });
+
+    if (isCode(req, url)) {
+      // network first; the saved copy only when offline or very slow
+      if (!cached) return fresh.catch(() => Response.error());
+      e.waitUntil(fresh.catch(() => {}));
+      const slow = new Promise((r) => setTimeout(() => r(cached), NETWORK_WAIT_MS));
+      return Promise.race([fresh.then((res) => (res.ok ? res : cached)).catch(() => cached), slow]);
+    }
+
+    // art and sounds: saved copy first, refreshed in the background
     if (cached) {
       e.waitUntil(fresh.catch(() => {}));
       return cached;

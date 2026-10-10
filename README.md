@@ -55,7 +55,7 @@ Notes: the page asks search engines not to index it and nothing links to it, so 
 
 ### After an update
 
-Phones show the cached copy first and fetch the update in the background, so a change appears the **second** time the game is opened after deploying.
+When the phone is online, the game always checks for the newest code, so a change shows up the next time the game is **opened** after the deploy finishes (about two minutes after pushing). If the game is already open, close it first: phones often just switch back to an open tab without reloading it. New art or recordings appear one launch later, because pictures and sounds load from the saved copy first for speed. Offline, the saved copy is used.
 
 ## Privacy
 
