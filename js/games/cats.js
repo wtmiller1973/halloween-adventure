@@ -92,7 +92,7 @@ export default {
       if (count >= CATS) {
         finished = true;
         hand.hide();
-        later(() => finish({ bonus: millyFound }), 1700);
+        later(() => finish({ bonus: millyFound ? 'milly' : null, chase: true }), 1700);
       }
     }
 

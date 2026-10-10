@@ -47,7 +47,7 @@ describe('audio cues', () => {
     const said = [...allJs.matchAll(/say\('([^']+)'[,)]/g)].map((m) => m[1])
       .concat([...allJs.matchAll(/cue: '([^']+)'/g)].map((m) => m[1]))
       .concat([...allJs.matchAll(/GOLDIE_SAYS = \[([^\]]+)\]/g)].flatMap((m) => [...m[1].matchAll(/'([^']+)'/g)].map((c) => c[1])))
-      .concat(['count-1', 'count-2', 'count-3', 'count-4', 'count-5', 'cheer-yay', 'cheer-great', 'cheer-did-it']);
+      .concat(['count-1', 'count-2', 'count-3', 'count-4', 'count-5', 'cheer-nicely-done', 'cheer-great', 'cheer-did-it']);
     for (const name of said) expect(VOICE, name).toHaveProperty([name]);
     const effects = [...allJs.matchAll(/sfx\('([^']+)'/g)].map((m) => m[1]);
     for (const name of effects) expect(SFX).toContain(name);

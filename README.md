@@ -4,9 +4,9 @@ Four short, friendly Halloween mini-games for a 3 to 5 year old, played on a pho
 
 | Game | What she does |
 |---|---|
-| **Ghost Pop** | Tap the friendly ghosts that peek out from behind tombstones. Ten pops wins. Missed ghosts just sink away. |
+| **Ghost Pop** | Tap the friendly ghosts that peek out from behind tombstones. Ten pops wins. Missed ghosts just sink away. Once a round a smiling croissant pops up instead of a ghost: tapping it gets "Yummy! Croissants are great!" (it doesn't count, but finding it puts it in the party with a bonus sparkle). |
 | **Pumpkin Carving** | Pick one of four faces, then trace the dotted shapes with a finger. Near the line counts, and progress is kept if she lifts her finger. When every shape is cut, the pumpkin lights up. |
-| **Count the Cats** | Find the five black cats in the yard. Each one is counted out loud with a big number. Milly, the orange cat from next door, is hiding too and gets her own "That's Milly!" (she doesn't count, but finding her adds a bonus sparkle to the party). Cats hide in different spots every time. |
+| **Count the Cats** | Find the five black cats in the yard. Each one is counted out loud with a big number. Milly, the orange cat from next door, is hiding too and gets her own "That's Milly!" (she doesn't count, but finding her adds a bonus sparkle to the party). Cats hide in different spots every time. The party ends with Milly chasing a mouse across the screen (it always gets away). |
 | **Dress Up Sniper** | Tap costume pieces to put them on Sniper (tap again to take them off). Mix and match a hat, a bow tie, a suit and wings or a cape. The star button says "Ta-da!" and shows him off. |
 
 Every game ends with the same party: pumpkins, bats, stars and candy fly, Goldie cheers, then a big **Play again** (circle arrow) and **Home** (house) button. A gold star sticker appears on the game's icon on the home screen.
@@ -80,9 +80,9 @@ Change a value and run `python3 tools/make_art.py` to redraw every SVG. Each cha
 |---|---|
 | Goldie | `assets/characters/goldie-wave.svg` (home), `goldie-cheer.svg` (celebration) |
 | Sniper | `assets/characters/sniper.svg` (dress-up), `sniper-head.svg` (home icon) |
-| Milly | `assets/characters/milly-peek.svg` (hiding), `milly.svg` (bonus in the party) |
+| Milly | `assets/characters/milly-peek.svg` (hiding), `milly.svg` (bonus in the party), `milly-run.svg` (chasing the mouse) |
 | Costumes | `assets/costumes/*.svg` (list and slots in `js/games/dressup.js`) |
-| Friendly cast | `assets/characters/ghost.svg`, `black-cat.svg`, `bat.svg`, `pumpkin.svg`, `candy.svg`, `star.svg` |
+| Friendly cast | `assets/characters/ghost.svg`, `black-cat.svg`, `bat.svg`, `pumpkin.svg`, `candy.svg`, `star.svg`, `croissant.svg`, `mouse.svg` |
 | Scenery | `assets/scenes/*.svg` |
 
 ### Voice and sounds

@@ -30,9 +30,10 @@ No code changes are needed. The game finds the file by its name. You can record 
 | `count-4.mp3` | "Four!" | Fourth black cat |
 | `count-5.mp3` | "Five!" | Fifth black cat |
 | `milly.mp3` | "That's Milly!" | Milly is tapped |
+| `croissant.mp3` | "Yummy! Croissants are great!" | Ghost Pop: the croissant is tapped |
 | `dressup-intro.mp3` | "Tap a costume for Sniper!" | Dress Up Sniper starts (right after the game's name) |
 | `tada.mp3` | "Wow, Sniper looks great!" | The star (Ta-da) button; the party starts just after it finishes |
-| `cheer-yay.mp3` | "Yay!" | Celebration (one of three, picked at random) |
+| `cheer-nicely-done.mp3` | "Nicely done. You're good at this." | Celebration (one of three, picked at random) |
 | `cheer-great.mp3` | "Great job!" | Celebration |
 | `cheer-did-it.mp3` | "You did it!" | Celebration |
 
@@ -51,11 +52,13 @@ All sound effects are in `assets/audio/sfx/`. They were synthesised from scratch
 | `sparkle.mp3` | Twinkles | Milly, Ta-da, bonus sparkle | Generated, CC0 |
 | `tap.mp3` | Soft blip | Buttons | Generated, CC0 |
 | `boo.mp3` | Friendly "woo-oo" | A ghost rises | Generated, CC0 |
-| `meow.mp3` | Meow | Milly tapped | Generated, CC0 |
+| `meow.mp3` | Meow | Milly tapped; Milly starts chasing the mouse | Generated, CC0 |
 | `woof.mp3` | Two barks | Sniper gets a costume or is tapped | Generated, CC0 |
 | `whoosh.mp3` | Whoosh | Costume on/off | Generated, CC0 |
 | `boing.mp3` | Spring | Cat jumps, Goldie tapped | Generated, CC0 |
 | `glow.mp3` | Rising chime | Pumpkin lights up | Generated, CC0 |
 | `jingle.mp3` | Short happy tune | Every celebration | Generated, CC0 |
+| `squeak.mp3` | Tiny mouse squeak | Count the Cats celebration: the mouse chase | Generated, CC0 |
+| `nom.mp3` | Two crunchy bites | Ghost Pop: the croissant is tapped | Generated, CC0 |
 
 To regenerate them: `python3 tools/make_sfx.py` (needs numpy and ffmpeg).

@@ -430,6 +430,73 @@ def milly_full():
 
 write('characters', 'milly', '0 0 320 340', milly_full())
 
+
+def milly_run():
+    """Milly side-on, mid-bound, facing right (for the mouse chase)."""
+    p = []
+    # big fluffy tail streaming up behind her, cream tip
+    p.append(f'<path fill="{ORANGE_CAT}" d="M70,96 C40,90 18,66 16,34 C15,20 32,16 36,30 C40,56 58,74 84,80 Z"/>')
+    p.append(f'<path fill="{CREAM}" d="M16,34 C15,20 32,16 36,30 C37,36 37,40 36,44 C28,42 20,40 16,34 Z"/>')
+    # legs: back pair kicked out behind, front pair reaching forward
+    p.append(limb('M86,120 Q66,138 46,146', ORANGE_CAT, 20))
+    p.append(limb('M178,118 Q200,134 222,138', ORANGE_CAT, 20))
+    p.append(f'<path fill="{ORANGE_CAT}" d="{fluffy(130, 100, 72, 38, 14, 0.06)}"/>')
+    p.append(f'<path fill="{CREAM}" stroke="none" d="M110,126 C130,138 168,132 184,114 C170,120 140,124 110,126 Z"/>')
+    p.append(f'<g fill="none" stroke="{STRIPE}" stroke-width="6"><path d="M100,66 Q106,82 98,96"/>'
+             f'<path d="M124,62 Q130,80 122,94"/><path d="M148,64 Q154,80 146,92"/></g>')
+    # head: the same friendly face as her other drawings
+    p.append(f'<g transform="translate(204,70) scale(0.62) translate(-120,-112)">'
+             f'{cat_head(120, 112, ORANGE_CAT, "#F7B9A8", "#CFDD72", 4, True)}</g>')
+    return ''.join(p)
+
+
+write('characters', 'milly-run', '0 0 260 170', milly_run())
+
+# A small, friendly grey mouse, facing right.
+MOUSE = '#A3A3BC'
+write('characters', 'mouse', '0 0 170 110',
+      '<path d="M40,70 C20,72 8,58 10,40 C11,30 18,26 24,30" fill="none" stroke="#2b1b17" stroke-width="11"/>'
+      '<path d="M40,70 C20,72 8,58 10,40 C11,30 18,26 24,30" fill="none" stroke="#EFA3B8" stroke-width="5"/>'
+      f'<ellipse cx="78" cy="70" rx="46" ry="28" fill="{MOUSE}"/>'
+      '<ellipse cx="60" cy="96" rx="12" ry="6" fill="#EFA3B8"/><ellipse cx="102" cy="96" rx="12" ry="6" fill="#EFA3B8"/>'
+      f'<circle cx="112" cy="36" r="17" fill="{MOUSE}"/><circle cx="112" cy="36" r="9" fill="#F7B9C8" stroke="none"/>'
+      f'<path fill="{MOUSE}" d="M100,58 C104,38 134,36 146,52 C152,58 160,62 160,68 C160,76 140,84 118,82 C104,80 98,70 100,58 Z"/>'
+      '<circle cx="160" cy="67" r="6" fill="#F27C8E" stroke-width="3"/>'
+      '<circle cx="132" cy="58" r="6" fill="#1a1420" stroke="none"/><circle cx="130" cy="56" r="2.2" fill="#fff" stroke="none"/>'
+      '<path d="M138,74 Q144,79 150,74" fill="none" stroke-width="3"/>'
+      '<ellipse cx="124" cy="70" rx="6" ry="4" fill="#F59D9D" stroke="none" opacity=".7"/>'
+      '<g stroke="#2b1b17" stroke-width="2" fill="none"><path d="M152,64 L168,58 M152,68 L169,68"/></g>')
+
+# Croissant with a smiling face (the Ghost Pop surprise).
+DOUGH = '#EBA54C'
+DOUGH_HI = '#F7CB7E'
+
+
+def croissant():
+    """Five puffy segments laid along an arch, smiling from the middle one."""
+    p = []
+    cx, cy, r = 110, 156, 88  # the arch the segments sit on
+    segs = [(-150, 17, 25), (-30, 17, 25), (-122, 27, 36), (-58, 27, 36), (-90, 37, 46)]  # tips, sides, middle
+    for ang, rx, ry in segs:
+        x = cx + r * math.cos(math.radians(ang))
+        y = cy + r * math.sin(math.radians(ang))
+        p.append(f'<ellipse cx="{x:.1f}" cy="{y:.1f}" rx="{rx}" ry="{ry}" '
+                 f'transform="rotate({ang + 90} {x:.1f} {y:.1f})" fill="{DOUGH}"/>')
+        hx = cx + (r + ry * 0.55) * math.cos(math.radians(ang))
+        hy = cy + (r + ry * 0.55) * math.sin(math.radians(ang))
+        p.append(f'<ellipse cx="{hx:.1f}" cy="{hy:.1f}" rx="{rx * 0.5:.1f}" ry="{max(3, ry * 0.12):.1f}" '
+                 f'transform="rotate({ang + 90} {hx:.1f} {hy:.1f})" fill="{DOUGH_HI}" stroke="none"/>')
+    for x in (96, 124):
+        p.append(f'<ellipse cx="{x}" cy="70" rx="7.5" ry="9.5" fill="#2b1b17"/>')
+        p.append(f'<circle cx="{x - 2}" cy="66" r="3" fill="#fff" stroke="none"/>')
+    p.append('<path d="M98,86 Q110,100 122,86 Q110,92 98,86 Z" fill="#9E2F3A" stroke-width="4"/>')
+    p.append('<g fill="#F59D9D" stroke="none" opacity=".75"><ellipse cx="84" cy="84" rx="7" ry="4.5"/>'
+             '<ellipse cx="136" cy="84" rx="7" ry="4.5"/></g>')
+    return ''.join(p)
+
+
+write('characters', 'croissant', '0 0 220 150', croissant())
+
 # ---------------------------------------------------------------- Friendly cast
 write('characters', 'ghost', '0 0 200 240',
       '<path fill="#FFFFFF" d="M100,12 C152,12 182,52 182,112 L182,214 Q168,232 154,214 Q140,232 126,214 '

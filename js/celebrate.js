@@ -15,11 +15,13 @@ export function awardSticker(gameId) {
  * @param {object} o
  * @param {string} o.gameId         which home icon gets the sticker
  * @param {Element} [o.showcase]    something to show off in the middle (dressed-up Sniper)
- * @param {boolean} [o.bonus]       extra sparkle + Milly (found her in the cat game)
+ * @param {string} [o.bonus]        'milly' or 'croissant': the hidden extra was found, so it
+ *                                  pops up with a bonus sparkle
+ * @param {boolean} [o.chase]       Milly chases a mouse across the screen (cat game)
  * @param {Function} o.onAgain
  * @param {Function} o.onHome
  */
-export function celebrate({ gameId, showcase, bonus, onAgain, onHome }) {
+export function celebrate({ gameId, showcase, bonus, chase, onAgain, onHome }) {
   awardSticker(gameId);
   const ov = el('div', 'celebration', document.getElementById('app'));
   const burst = el('div', 'confetti', ov);
@@ -28,14 +30,14 @@ export function celebrate({ gameId, showcase, bonus, onAgain, onHome }) {
     stage.appendChild(showcase);
   }
   if (bonus) {
-    const m = el('div', 'bonus-milly', ov);
-    m.appendChild(svg('characters/milly'));
+    const m = el('div', 'bonus-item ' + bonus, ov);
+    m.appendChild(svg('characters/' + bonus));
   }
   const g = el('div', 'cheer-goldie' + (showcase ? ' side' : ''), ov);
   g.appendChild(svg('characters/goldie-cheer'));
 
   sfx('jingle');
-  setTimeout(() => voiceIdle(4000).then(() => say(pick(['cheer-yay', 'cheer-great', 'cheer-did-it']))), 250);
+  setTimeout(() => voiceIdle(4000).then(() => say(pick(['cheer-nicely-done', 'cheer-great', 'cheer-did-it']))), 250);
 
   const W = window.innerWidth;
   const H = window.innerHeight;
@@ -59,6 +61,7 @@ export function celebrate({ gameId, showcase, bonus, onAgain, onHome }) {
   };
   launch(18, 0);
   launch(12, 1200);
+  if (chase) mouseChase(ov, W);
   if (bonus) {
     setTimeout(() => {
       sfx('sparkle');
@@ -75,4 +78,25 @@ export function celebrate({ gameId, showcase, bonus, onAgain, onHome }) {
   }, 3600);
 
   return () => ov.remove();
+}
+
+// Milly chases a mouse across the bottom of the screen and back; the mouse
+// always gets away. Done before the Play again / Home buttons appear (3.6 s).
+function mouseChase(ov, W) {
+  const lane = el('div', 'chase-lane', ov);
+  const mouse = el('div', 'chase-mouse', lane);
+  mouse.appendChild(svg('characters/mouse'));
+  const milly = el('div', 'chase-milly', lane);
+  el('div', 'chase-hop', milly).appendChild(svg('characters/milly-run'));
+  const run = (node, width, delay) => node.animate([
+    { transform: `translateX(${-width - 10}px) scaleX(1)` },
+    { transform: `translateX(${W + 10}px) scaleX(1)`, offset: 0.46 },
+    { transform: `translateX(${W + 10}px) scaleX(-1)`, offset: 0.54 },
+    { transform: `translateX(${-width - 10}px) scaleX(-1)` },
+  ], { duration: 2800, delay, fill: 'both' });
+  run(mouse, 70, 300);
+  run(milly, 140, 650);
+  setTimeout(() => sfx('squeak'), 300);
+  setTimeout(() => sfx('meow', { volume: 0.7 }), 700);
+  setTimeout(() => sfx('squeak', { rate: 1.1 }), 300 + 2800 * 0.5);
 }

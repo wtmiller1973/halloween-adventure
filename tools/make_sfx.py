@@ -138,6 +138,20 @@ save('boing', np.sin(2 * np.pi * np.cumsum(f) / SR) * env(len(tt), 0.005, 0.15),
 notes = [523, 659, 784, 1047, 1319]
 save('glow', mix(1.4, *[(i * 0.12, bell(fr, 0.9, 3)) for i, fr in enumerate(notes)]), 0.7)
 
+# squeak: a tiny mouse "eep-eep"
+save('squeak', mix(0.4, (0, np.sin(sweep(2400, 3600, 0.08)) * env(int(SR * 0.08), 0.005, 0.04)),
+                   (0.13, np.sin(sweep(2600, 3900, 0.09)) * env(int(SR * 0.09), 0.005, 0.05))), 0.5)
+
+# nom: two crunchy little bites
+def bite():
+    n = rng.standard_normal(int(SR * 0.12))
+    crunch = (lowpass(n, 3000) - lowpass(n, 700)) * np.exp(-30 * t(0.12))
+    thump = np.sin(sweep(260, 140, 0.12)) * np.exp(-25 * t(0.12))
+    return crunch + 0.8 * thump
+
+
+save('nom', mix(0.45, (0, bite()), (0.2, bite())), 0.8)
+
 # jingle: short cheerful celebration tune
 mel = [(0.00, 784), (0.16, 659), (0.32, 784), (0.48, 1047), (0.80, 988), (0.96, 1047), (1.12, 1175), (1.28, 1319)]
 bass = [(0.0, 262), (0.48, 349), (0.96, 392), (1.28, 523)]

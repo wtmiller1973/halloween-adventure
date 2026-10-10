@@ -1,5 +1,7 @@
 // Ghost Pop: friendly ghosts rise from behind tombstones; tap them to poof
 // them. Ten pops and the party starts. Missing is fine: they just sink away.
+// Once a round a smiling croissant pops up instead of a ghost (like Milly in
+// the cat game): a tap gets "Yummy!" but doesn't count toward the ten.
 import { el, svg, pick, shuffle, nearestHit, sparkleBurst, centerOf, hintHand } from '../util.js';
 import { makeSpot } from '../spots.js';
 import { say, sfx } from '../audio.js';
@@ -7,6 +9,10 @@ import { say, sfx } from '../audio.js';
 const GOAL = 10;
 const STAY_MS = 3200;   // how long a ghost waits to be tapped
 const MAX_UP = 2;       // never more than two at once
+// The croissant: a surprise that pops up in place of a ghost once a round.
+// It doesn't count; if she misses it, it comes back (up to CROISSANT_TRIES).
+const CROISSANT_MS = 4000;
+const CROISSANT_TRIES = 3;
 
 const SPOTS = [
   { x: 18, y: 45, w: 29 }, { x: 50, y: 42, w: 29 }, { x: 82, y: 45, w: 29 },
@@ -38,6 +44,10 @@ export default {
     let finished = false;
     let last = null;
     let firstShown = false;
+    let croissantFound = false;
+    let croissantTries = 0;
+    let croissantAt = 3 + Math.floor(Math.random() * 3); // after the 3rd to 5th pop
+    const croissantUp = () => spots.some((o) => o.up && o.treat);
     const timers = new Set();
     const later = (fn, ms) => { const t = setTimeout(() => { timers.delete(t); fn(); }, ms); timers.add(t); return t; };
 
@@ -49,18 +59,44 @@ export default {
       const s = pick(free);
       last = s;
       s.up = true;
-      s.actor.className = 'actor up';
-      if (Math.random() < 0.6) sfx('boo', { volume: 0.45, rate: 0.9 + Math.random() * 0.3 });
-      s.timer = later(() => sink(s), STAY_MS);
+      const treat = !croissantFound && !croissantUp() && croissantTries < CROISSANT_TRIES && popped >= croissantAt;
+      setTreat(s, treat);
+      s.actor.className = treat ? 'actor treat up' : 'actor up';
+      if (treat) croissantTries++;
+      else if (Math.random() < 0.6) sfx('boo', { volume: 0.45, rate: 0.9 + Math.random() * 0.3 });
+      s.timer = later(() => sink(s), treat ? CROISSANT_MS : STAY_MS);
       if (!firstShown) {
         firstShown = true;
         later(() => { if (s.up) { const c = centerOf(s.actor); hand.showAt(c.x, c.y); } }, 500);
       }
     }
 
+    // a spot shows either its ghost or the croissant
+    function setTreat(s, treat) {
+      if (s.treat === treat) return;
+      s.treat = treat;
+      s.actor.replaceChildren(svg(treat ? 'characters/croissant' : 'characters/ghost'));
+    }
+
     function sink(s) {
       s.up = false;
-      s.actor.className = 'actor';
+      s.actor.className = s.treat ? 'actor treat' : 'actor';
+      if (s.treat) croissantAt = popped + 2; // missed it: try again a little later
+    }
+
+    function eatCroissant(s) {
+      clearTimeout(s.timer);
+      timers.delete(s.timer);
+      s.up = false;
+      croissantFound = true;
+      hand.hide();
+      const c = centerOf(s.actor);
+      s.actor.className = 'actor treat up poof';
+      sfx('nom');
+      sfx('sparkle', { volume: 0.6 });
+      sparkleBurst(c.x, c.y, 16, 140);
+      say('croissant');
+      later(() => { s.actor.className = 'actor reset'; setTreat(s, false); }, 380);
     }
 
     function pop(s) {
@@ -79,14 +115,15 @@ export default {
       if (popped >= GOAL) {
         finished = true;
         spots.forEach((o) => { if (o.up) sink(o); });
-        later(() => finish(), 1000);
+        later(() => finish({ bonus: croissantFound ? 'croissant' : null }), 1000);
       }
     }
 
     stage.addEventListener('pointerdown', (e) => {
       if (finished) return;
       const hit = nearestHit(upSpots(), e.clientX, e.clientY, 0.35, (s) => s.actor);
-      if (hit) pop(hit);
+      if (hit && hit.treat) eatCroissant(hit);
+      else if (hit) pop(hit);
       else sparkleBurst(e.clientX, e.clientY, 4, 36, ['icons/sparkle']); // harmless miss
     });
 

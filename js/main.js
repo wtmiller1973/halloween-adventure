@@ -13,6 +13,7 @@ const SVGS = [
   'characters/goldie-wave', 'characters/goldie-cheer', 'characters/sniper', 'characters/sniper-head',
   'characters/milly', 'characters/milly-peek', 'characters/black-cat', 'characters/ghost',
   'characters/pumpkin', 'characters/bat', 'characters/candy', 'characters/star',
+  'characters/croissant', 'characters/mouse', 'characters/milly-run',
   'icons/home', 'icons/again', 'icons/sound-on', 'icons/sound-off', 'icons/tada', 'icons/hand',
   'icons/sparkle', 'icons/rotate',
   'scenes/tombstone', 'scenes/tombstone2', 'scenes/bush', 'scenes/fence', 'scenes/hay', 'scenes/pumpkin-plain',
