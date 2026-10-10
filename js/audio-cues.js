@@ -5,7 +5,9 @@
 // instead. To use a recording, save it with exactly that file name; no code
 // changes are needed. See AUDIO.md for the full recording list.
 export const VOICE = {
-  hello:            { say: 'Hi Goldie! Pick a game!',        where: 'Home screen, first tap' },
+  hello:            { say: 'Hi Goldie! Pick a game!',        where: 'Home screen, first tap; Goldie tapped (1st of 3)' },
+  'goldie-halloween': { say: 'Happy Halloween, Goldie!',     where: 'Goldie tapped on the home screen (2nd of 3)' },
+  'goldie-kiddo':   { say: 'You can do this, Kiddo!',        where: 'Goldie tapped on the home screen (3rd of 3)' },
   'game-ghosts':    { say: 'Ghost Pop!',                     where: 'Home: ghost icon tapped' },
   'game-pumpkin':   { say: 'Pumpkin Carving!',               where: 'Home: pumpkin icon tapped' },
   'game-cats':      { say: 'Count the Cats!',                where: 'Home: cat icon tapped' },
@@ -21,8 +23,8 @@ export const VOICE = {
   'count-4':        { say: 'Four!',                          where: 'Fourth black cat found' },
   'count-5':        { say: 'Five!',                          where: 'Fifth black cat found' },
   milly:            { say: "That's Milly!",                  where: 'Milly tapped' },
-  'dressup-intro':  { say: 'Dress up Sniper!',               where: 'Dress Up Sniper starts' },
-  tada:             { say: 'Ta-da! Sniper looks great!',     where: 'Ta-da star tapped' },
+  'dressup-intro':  { say: 'Tap a costume for Sniper!',      where: 'Dress Up Sniper starts' },
+  tada:             { say: 'Wow, Sniper looks great!',       where: 'Ta-da star tapped, just before the celebration' },
   'cheer-yay':      { say: 'Yay!',                           where: 'Celebration (random)' },
   'cheer-great':    { say: 'Great job!',                     where: 'Celebration (random)' },
   'cheer-did-it':   { say: 'You did it!',                    where: 'Celebration (random)' },

@@ -12,6 +12,7 @@ const sfxBuf = new Map();
 const voiceBuf = new Map(); // name -> Promise<AudioBuffer|null>
 let voiceSrc = null;
 let voiceDone = null;
+let speaking = null; // promise for the voice line playing now, if any
 let ttsVoice = null;
 
 function decode(data) {
@@ -105,15 +106,33 @@ export function stopVoice() {
   if (voiceDone) { voiceDone(); voiceDone = null; }
 }
 
+/** True while a voice line is playing (or about to). */
+export function isSpeaking() { return speaking !== null; }
+
+/** Resolves when the current voice line ends (never waits longer than `max` ms). */
+export function voiceIdle(max = 8000) {
+  if (!speaking) return Promise.resolve();
+  return Promise.race([speaking, new Promise((r) => setTimeout(r, max))]);
+}
+
 /**
- * Say a voice cue by name. Stops any voice already playing.
+ * Say a voice cue by name. Normally stops any voice already playing;
+ * with { queue: true } it waits for that line to finish first.
  * Resolves when it finishes (or straight away when muted).
  */
-export async function say(name) {
+export async function say(name, { queue = false } = {}) {
   const cue = VOICE[name];
   if (!cue || !ctx || muted) return;
+  if (queue) {
+    await voiceIdle();
+    if (muted) return;
+  }
   stopVoice();
-  const myDone = new Promise((res) => { voiceDone = res; });
+  let myDone;
+  myDone = new Promise((res) => {
+    voiceDone = () => { if (speaking === myDone) speaking = null; res(); };
+  });
+  speaking = myDone;
   const finish = voiceDone;
   const buf = await voiceBuf.get(name);
   if (voiceDone !== finish) return; // something else started meanwhile

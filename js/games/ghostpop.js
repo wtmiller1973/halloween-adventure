@@ -90,7 +90,7 @@ export default {
       else sparkleBurst(e.clientX, e.clientY, 4, 36, ['icons/sparkle']); // harmless miss
     });
 
-    say('ghosts-intro');
+    say('ghosts-intro', { queue: true }); // after the game's name finishes
     later(rise, 700);
     const loop = setInterval(() => {
       const n = upSpots().length;

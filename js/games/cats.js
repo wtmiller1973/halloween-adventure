@@ -104,7 +104,7 @@ export default {
       else sparkleBurst(e.clientX, e.clientY, 4, 36, ['icons/sparkle']);
     });
 
-    say('cats-intro');
+    say('cats-intro', { queue: true }); // after the game's name finishes
     resetHint();
 
     return () => {

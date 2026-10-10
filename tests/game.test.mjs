@@ -44,8 +44,9 @@ describe('privacy', () => {
 describe('audio cues', () => {
   it('every cue the code uses is in the manifest, and every effect file exists', async () => {
     const { VOICE, SFX } = await import(path.join(ROOT, 'js/audio-cues.js'));
-    const said = [...allJs.matchAll(/say\('([^']+)'\)/g)].map((m) => m[1])
+    const said = [...allJs.matchAll(/say\('([^']+)'[,)]/g)].map((m) => m[1])
       .concat([...allJs.matchAll(/cue: '([^']+)'/g)].map((m) => m[1]))
+      .concat([...allJs.matchAll(/GOLDIE_SAYS = \[([^\]]+)\]/g)].flatMap((m) => [...m[1].matchAll(/'([^']+)'/g)].map((c) => c[1])))
       .concat(['count-1', 'count-2', 'count-3', 'count-4', 'count-5', 'cheer-yay', 'cheer-great', 'cheer-did-it']);
     for (const name of said) expect(VOICE, name).toHaveProperty([name]);
     const effects = [...allJs.matchAll(/sfx\('([^']+)'/g)].map((m) => m[1]);

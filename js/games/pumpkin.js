@@ -93,7 +93,7 @@ export default {
         later(() => { picker.remove(); stopTrace = trace(paths); }, 250);
       });
     }
-    say('pumpkin-pick');
+    say('pumpkin-pick', { queue: true }); // after the game's name finishes
 
     // ---------------------------------------------------------- 2. trace
     function trace(paths) {

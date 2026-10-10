@@ -4,7 +4,7 @@
 //
 // To add or swap a costume, drop an SVG drawn in Sniper's coordinate system
 // (viewBox "0 -100 400 580") into assets/costumes/ and list it below.
-import { el, svg, sparkleBurst, centerOf, hintHand, pulseClass } from '../util.js';
+import { el, svg, sparkleBurst, centerOf, hintHand, pulseClass, wait } from '../util.js';
 import { say, sfx } from '../audio.js';
 
 const COSTUMES = [
@@ -39,6 +39,7 @@ export default {
     const tray = el('div', 'tray', root);
     const hand = hintHand(root);
     let finished = false;
+    let gone = false; // left the game before the party started
     const timers = new Set();
     const later = (fn, ms) => { const t = setTimeout(() => { timers.delete(t); fn(); }, ms); timers.add(t); };
 
@@ -105,25 +106,29 @@ export default {
       finished = true;
       hand.hide();
       sfx('sparkle');
-      say('tada');
       const c = centerOf(dog);
       sparkleBurst(c.x, c.y, 20, 180);
-      later(() => {
+      // let "Wow, Sniper looks great!" finish, pause a moment, then party
+      Promise.all([
+        Promise.race([say('tada'), wait(6000)]),
+        wait(1200), // keep the sparkle moment even when muted
+      ]).then(() => wait(750)).then(() => {
+        if (gone) return;
         const show = dog.cloneNode(true);
         show.className = 'dog showing';
         finish({ showcase: show });
-      }, 1500);
+      });
     });
 
     dog.addEventListener('pointerdown', () => { if (!finished) react(); });
 
-    say('dressup-intro');
+    say('dressup-intro', { queue: true }); // after the game's name finishes
     later(() => {
       if (Object.keys(worn).length) return;
       const c = centerOf(tray.firstChild);
       hand.showAt(c.x, c.y);
     }, 1800);
 
-    return () => timers.forEach(clearTimeout);
+    return () => { gone = true; timers.forEach(clearTimeout); };
   },
 };

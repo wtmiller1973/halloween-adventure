@@ -1,7 +1,7 @@
 // The shared end-of-game party: a burst of pumpkins, bats, stars and candy,
 // Goldie cheering, a spoken cheer and a jingle, then Play again / Home.
 import { el, svg, rand, pick, iconButton, sparkleBurst, store } from './util.js';
-import { say, sfx } from './audio.js';
+import { say, sfx, voiceIdle } from './audio.js';
 
 const CONFETTI = ['characters/pumpkin', 'characters/bat', 'characters/star', 'characters/candy', 'characters/ghost'];
 
@@ -35,7 +35,7 @@ export function celebrate({ gameId, showcase, bonus, onAgain, onHome }) {
   g.appendChild(svg('characters/goldie-cheer'));
 
   sfx('jingle');
-  setTimeout(() => say(pick(['cheer-yay', 'cheer-great', 'cheer-did-it'])), 250);
+  setTimeout(() => voiceIdle(4000).then(() => say(pick(['cheer-yay', 'cheer-great', 'cheer-did-it']))), 250);
 
   const W = window.innerWidth;
   const H = window.innerHeight;

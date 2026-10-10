@@ -12,7 +12,9 @@ No code changes are needed. The game finds the file by its name. You can record 
 
 | File name | Suggested line | When it plays |
 |---|---|---|
-| `hello.mp3` | "Hi Goldie! Pick a game!" | Home screen, the first time she taps |
+| `hello.mp3` | "Hi Goldie! Pick a game!" | Home screen, the first time she taps; also Goldie's 1st line when tapped |
+| `goldie-halloween.mp3` | "Happy Halloween, Goldie!" | Goldie tapped on the home screen (2nd line) |
+| `goldie-kiddo.mp3` | "You can do this, Kiddo!" | Goldie tapped on the home screen (3rd line) |
 | `game-ghosts.mp3` | "Ghost Pop!" | Ghost icon tapped on the home screen |
 | `game-pumpkin.mp3` | "Pumpkin Carving!" | Pumpkin icon tapped |
 | `game-cats.mp3` | "Count the Cats!" | Cat icon tapped |
@@ -28,8 +30,8 @@ No code changes are needed. The game finds the file by its name. You can record 
 | `count-4.mp3` | "Four!" | Fourth black cat |
 | `count-5.mp3` | "Five!" | Fifth black cat |
 | `milly.mp3` | "That's Milly!" | Milly is tapped |
-| `dressup-intro.mp3` | "Dress up Sniper!" | Dress Up Sniper starts |
-| `tada.mp3` | "Ta-da! Sniper looks great!" | The star (Ta-da) button |
+| `dressup-intro.mp3` | "Tap a costume for Sniper!" | Dress Up Sniper starts (right after the game's name) |
+| `tada.mp3` | "Wow, Sniper looks great!" | The star (Ta-da) button; the party starts just after it finishes |
 | `cheer-yay.mp3` | "Yay!" | Celebration (one of three, picked at random) |
 | `cheer-great.mp3` | "Great job!" | Celebration |
 | `cheer-did-it.mp3` | "You did it!" | Celebration |

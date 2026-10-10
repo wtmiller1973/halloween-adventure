@@ -1,6 +1,6 @@
 // Boot, home screen and navigation between games.
 import { el, svg, store, preloadSVGs, iconButton, pulseClass, sparkleBurst } from './util.js';
-import { unlock, say, sfx, stopVoice, isMuted, setMuted } from './audio.js';
+import { unlock, say, sfx, stopVoice, isMuted, setMuted, isSpeaking } from './audio.js';
 import { celebrate } from './celebrate.js';
 import ghostPop from './games/ghostpop.js';
 import pumpkin from './games/pumpkin.js';
@@ -40,12 +40,12 @@ if (new URLSearchParams(location.search).has('reset')) {
 }
 
 // ---------------------------------------------------------------- navigation
-function clear() {
+function clear({ keepVoice = false } = {}) {
   if (cleanup) cleanup();
   cleanup = null;
   if (closeParty) closeParty();
   closeParty = null;
-  stopVoice();
+  if (!keepVoice) stopVoice();
   holder.replaceChildren();
 }
 
@@ -59,7 +59,7 @@ function goHome() {
 window.addEventListener('popstate', () => showHome());
 
 function startGame(game, push = true) {
-  clear();
+  clear({ keepVoice: true }); // let the game's name finish; its intro queues after it
   current = game;
   if (push) history.pushState({ game: game.id }, '');
   const root = el('div', 'screen game-' + game.id, holder);
@@ -75,6 +75,9 @@ function startGame(game, push = true) {
     },
   });
 }
+
+const GOLDIE_SAYS = ['hello', 'goldie-halloween', 'goldie-kiddo'];
+let goldieLine = 0;
 
 function showHome() {
   clear();
@@ -105,7 +108,15 @@ function showHome() {
   }
   const g = el('div', 'home-goldie', root);
   g.appendChild(svg('characters/goldie-wave'));
-  g.addEventListener('pointerdown', () => { sfx('boing'); pulseClass(g, 'hop'); });
+  // Tapping Goldie: she says the next of her three lines (back to the first
+  // each time the home screen loads). A tap while she's talking just hops.
+  goldieLine = 0;
+  g.addEventListener('pointerdown', () => {
+    pulseClass(g, 'hop');
+    if (isSpeaking()) return;
+    say(GOLDIE_SAYS[goldieLine]);
+    goldieLine = (goldieLine + 1) % GOLDIE_SAYS.length;
+  });
   if (Object.keys(done).length) startOverButton(root, grid);
 }
 
@@ -172,13 +183,19 @@ function setupMute() {
   });
 }
 
+// The first tap on the home screen gets a hello, unless that tap already
+// makes a sound of its own (a game icon, Goldie, or a corner button).
 let greeted = false;
-document.addEventListener('pointerdown', () => {
+document.addEventListener('pointerdown', (e) => {
   unlock();
-  if (!greeted) {
-    greeted = true;
-    if (!current) setTimeout(() => { if (!current) say('hello'); }, 50);
-  }
+  if (greeted) return;
+  greeted = true;
+  if (current || e.target.closest('.tile, .home-goldie, .icon-btn')) return;
+  setTimeout(() => {
+    if (current) return;
+    say('hello');
+    goldieLine = 1; // she just said line 1, so Goldie's first tap is line 2
+  }, 50);
 }, true);
 
 async function boot() {
