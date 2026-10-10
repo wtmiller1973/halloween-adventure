@@ -1,5 +1,5 @@
 // Boot, home screen and navigation between games.
-import { el, svg, store, preloadSVGs, iconButton, pulseClass } from './util.js';
+import { el, svg, store, preloadSVGs, iconButton, pulseClass, sparkleBurst } from './util.js';
 import { unlock, say, sfx, stopVoice, isMuted, setMuted } from './audio.js';
 import { celebrate } from './celebrate.js';
 import ghostPop from './games/ghostpop.js';
@@ -106,6 +106,54 @@ function showHome() {
   const g = el('div', 'home-goldie', root);
   g.appendChild(svg('characters/goldie-wave'));
   g.addEventListener('pointerdown', () => { sfx('boing'); pulseClass(g, 'hop'); });
+  if (Object.keys(done).length) startOverButton(root, grid);
+}
+
+// Start over: clears the stickers. It must be held down while a ring fills
+// (about 1.5 s), so a quick accidental tap only makes it wiggle.
+const HOLD_MS = 1500;
+
+function startOverButton(root, grid) {
+  const b = el('button', 'icon-btn corner start-over', root);
+  b.type = 'button';
+  b.setAttribute('aria-label', 'Start over (press and hold)');
+  b.appendChild(svg('icons/again'));
+  let t0 = 0;
+  let raf = 0;
+  const setP = (p) => b.style.setProperty('--p', String(p));
+  const cancel = (wiggle) => {
+    cancelAnimationFrame(raf);
+    raf = 0;
+    setP(0);
+    if (wiggle) pulseClass(b, 'wiggle');
+  };
+  const tick = (now) => {
+    const p = Math.min(1, (now - t0) / HOLD_MS);
+    setP(p);
+    if (p < 1) { raf = requestAnimationFrame(tick); return; }
+    raf = 0;
+    store.set('done', {});
+    sfx('whoosh');
+    sfx('sparkle', { volume: 0.7 });
+    grid.querySelectorAll('.sticker').forEach((s) => {
+      const r = s.getBoundingClientRect();
+      sparkleBurst(r.left + r.width / 2, r.top + r.height / 2, 8, 80);
+      s.classList.add('sticker-off');
+      s.addEventListener('animationend', () => s.remove());
+    });
+    b.classList.add('gone');
+    setTimeout(() => b.remove(), 400);
+  };
+  b.addEventListener('pointerdown', (e) => {
+    e.stopPropagation();
+    if (raf) return;
+    try { b.setPointerCapture(e.pointerId); } catch { /* fine */ }
+    sfx('tap');
+    t0 = performance.now();
+    raf = requestAnimationFrame(tick);
+  });
+  b.addEventListener('pointerup', () => { if (raf) cancel(true); });
+  b.addEventListener('pointercancel', () => { if (raf) cancel(false); });
 }
 
 // ---------------------------------------------------------------- boot

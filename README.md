@@ -14,7 +14,7 @@ Every game ends with the same party: pumpkins, bats, stars and candy fly, Goldie
 ## For parents
 
 - **Sound:** the speaker button in the top-right corner turns sound on and off (it remembers). On iPhone, the side silent switch also mutes it.
-- **Reset the stickers:** open the link with `?reset` on the end, e.g. `https://wtmiller1973.github.io/halloween-adventure/?reset`.
+- **Reset the stickers:** once any star is earned, a circular-arrow button appears in the top-left of the home screen. **Press and hold it** until the yellow ring fills (about 1.5 seconds) and the stars spin away. A quick tap just wiggles it, so it can't be cleared by accident. (Opening the link with `?reset` on the end also works.)
 - **Add to home screen (optional):** in Safari tap Share, then "Add to Home Screen". It then opens full-screen and stays in portrait. It works without a connection after the first visit either way.
 - **Guided Access (iPhone) / Screen pinning (Android)** keeps a small child inside the game. The game itself has no links out, no pop-ups and no purchases.
 
