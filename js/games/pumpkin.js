@@ -80,7 +80,7 @@ export default {
     // ---------------------------------------------------------- 1. pick a face
     const picker = el('div', 'face-picker', root);
     for (const [name, paths] of Object.entries(PATTERNS)) {
-      const b = el('button', 'face-choice', picker);
+      const b = el('button', 'face-choice pic-box square', picker);
       b.type = 'button';
       b.setAttribute('aria-label', name + ' face');
       const s = makeSVG('');

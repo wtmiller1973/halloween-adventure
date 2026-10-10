@@ -89,7 +89,7 @@ function showHome() {
   const done = store.get('done', {});
   let busy = false;
   for (const game of GAMES) {
-    const tile = el('button', 'tile', grid);
+    const tile = el('button', 'tile pic-box square', grid);
     tile.type = 'button';
     tile.setAttribute('aria-label', game.name);
     tile.appendChild(svg(game.icon, 'tile-art'));

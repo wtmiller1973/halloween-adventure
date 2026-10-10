@@ -82,7 +82,7 @@ export default {
     }
 
     for (const c of COSTUMES) {
-      const tile = el('button', 'tray-tile', tray);
+      const tile = el('button', 'tray-tile pic-box', tray);
       tile.type = 'button';
       tile.setAttribute('aria-label', c.id.replace('-', ' '));
       const thumb = svg('costumes/' + c.id, 'thumb');
@@ -96,7 +96,7 @@ export default {
       });
     }
 
-    const tadaTile = el('button', 'tray-tile tada', tray);
+    const tadaTile = el('button', 'tray-tile pic-box tada', tray);
     tadaTile.type = 'button';
     tadaTile.setAttribute('aria-label', 'Ta-da!');
     tadaTile.appendChild(svg('icons/tada'));
